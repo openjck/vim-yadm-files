@@ -46,9 +46,9 @@ function! s:IsYADMAlternateFile(filename)
   "
   " "extension" and "e" are ommitted because they themselves serve to coerce
   " editors into treating the alternate file as if it had a particular
-  " extension. However, I have found that this only coerces Neovim to treat the
-  " file differently if it would normally have an extension. See README.md for
-  " more information.
+  " extension. However, I have found that this only coerces Vim/Neovim to treat
+  " the file differently if it would normally have an extension. See README.md
+  " for more information.
   let l:attributes = [
   \ 'template', 't',
   \ 'user', 'u',

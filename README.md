@@ -23,3 +23,9 @@ names or will not correctly get the `gitconfig` file type:
 
     .gitconfig##distro.Ubuntu
     .gitconfig##distro.Ubuntu,extension.gitconfig
+
+## Why not use a Vim modeline?
+
+You can use a [modeline](https://vim.fandom.com/wiki/Modeline_magic) to coerce
+Vim/Neovim into setting the correct filetype. I just prefer to keep my files
+clean.

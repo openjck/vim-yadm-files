@@ -19,6 +19,19 @@ function! s:HandlePossibleYADMAlternateFile()
 
   if s:IsYADMAlternateFile(l:filename)
 
+    " If this file has a name which includes an "extension"/"e" attribute-value
+    " pair, dont do anything, so as to allow the "extension"/"e" attribute to
+    " have its intended effect
+    "
+    " This ensures that, for example, a file with the following name is given
+    " the fish filetype as the author clearly intends by the enclusion of the
+    " "extension" attribute-value pair:
+    "
+    " script.sh##distro.Ubuntu,extension.fish
+    if s:IsYADMAlternateFileWithExtensionAttribute(l:filename)
+      return
+    endif
+
     " For example, .gitconfig
     let l:filename_without_suffix = split(l:filename, '##')[0]
 
@@ -40,15 +53,19 @@ function! s:HandlePossibleYADMAlternateFile()
   endif
 endfunction
 
+" Return true if the file is a YADM alternate file and it contains an
+" extension/e attribute-value pair
+function! s:IsYADMAlternateFileWithExtensionAttribute(filename)
+  " =~# is the "regex matches" operator
+  if a:filename =~# '\(##\|##.*,\)\(extension\|e\)\.'
+    return 1 " true
+  endif
+  return 0 " false
+endfunction
+
 function! s:IsYADMAlternateFile(filename)
   " Valid suffix attributes. These are listed in the YADM documentation:
   " https://yadm.io/docs/alternates
-  "
-  " "extension" and "e" are ommitted because they themselves serve to coerce
-  " editors into treating the alternate file as if it had a particular
-  " extension. However, I have found that this only coerces Vim/Neovim to treat
-  " the file differently if it would normally have an extension. See README.md
-  " for more information.
   let l:attributes = [
   \ 'template', 't',
   \ 'user', 'u',
@@ -57,6 +74,7 @@ function! s:IsYADMAlternateFile(filename)
   \ 'class', 'c',
   \ 'hostname', 'h',
   \ 'default',
+  \ 'extension', 'e',
   \]
 
   for l:attribute in l:attributes

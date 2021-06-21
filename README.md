@@ -23,16 +23,16 @@ vim-yadm-files supports Jinja-based YADM
 [templates](https://yadm.io/docs/templates). For example, when this plugin is
 enabled, a file with any of the following names will get the `jinja` filetype:
 
-- .gitconfig##t
-- .gitconfig##t.default
-- .gitconfig##t.j2
-- .gitconfig##t.j2cli
-- .gitconfig##t.envtpl
-- .gitconfig##template
-- .gitconfig##template.default
-- .gitconfig##template.j2
-- .gitconfig##template.j2cli
-- .gitconfig##template.envtpl
+- `.gitconfig##t`
+- `.gitconfig##t.default`
+- `.gitconfig##t.j2`
+- `.gitconfig##t.j2cli`
+- `.gitconfig##t.envtpl`
+- `.gitconfig##template`
+- `.gitconfig##template.default`
+- `.gitconfig##template.j2`
+- `.gitconfig##template.j2cli`
+- `.gitconfig##template.envtpl`
 
 Note that neither Vim nor Neovim supports the `jinja` filetype out of the box.
 For syntax highlighting and other features, install a Jinja plugin like
@@ -44,8 +44,8 @@ vim-yadm-files sets the `esh` filetype on esh-based YADM
 [templates](https://yadm.io/docs/templates). For example, when this plugin is
 enabled, a file with either of the following names will get the `esh` filetype:
 
-- .gitconfig##t.esh
-- .gitconfig##template.esh
+- `.gitconfig##t.esh`
+- `.gitconfig##template.esh`
 
 Note that neither Vim nor Neovim supports the `esh` filetype out of the box. I
 also cannot find any plugins which provide syntax highlighting or other features
@@ -61,12 +61,12 @@ attribute to make it appear as though it has a certain extension. For example, a
 file with the following name will be treated as a Fish script in Vim/Neovim and
 most other editors, even without this plugin enabled:
 
-    utils.fish##distro.Ubuntu,extension.fish
+`utils.fish##distro.Ubuntu,extension.fish`
 
 However, I have found that this does not work in Vim/Neovim. For example, Vim
 will report that there is no filetype when the following command is run:
 
-    vim -u NONE utils.fish##distro.Ubuntu,extension.fish -c 'set ft?'
+`vim -u NONE utils.fish##distro.Ubuntu,extension.fish -c 'set ft?'`
 
 (If `-u NONE` is not passed and a corresponding language plugin is enabled, Vim
 may print the correct filetype. For example, in the above example, if `-u NONE`
@@ -78,8 +78,8 @@ The `extension`/`e` attribute also does not work in Vim/Neovim for files that do
 not have extensions. For example, without this plugin, a file with either of the
 following names will not get the `gitconfig` file type:
 
-    .gitconfig##distro.Ubuntu
-    .gitconfig##distro.Ubuntu,extension.gitconfig
+- `.gitconfig##distro.Ubuntu`
+- `.gitconfig##distro.Ubuntu,extension.gitconfig`
 
 ### Why not use a modeline?
 

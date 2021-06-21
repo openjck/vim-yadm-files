@@ -25,9 +25,11 @@ function! s:HandlePossibleAlternateFile()
   " If this alternate file includes an extension/e attribute, don't do anything,
   " so that the extension/e attribute takes precedence.
   "
-  " This ensures that, for example, a file with the following name is given the
-  " fish filetype, as the author clearly intends by the inclusion of the
-  " extension/e attribute.
+  " This ensures that, for example, if the vim-fish plugin is installed, a file
+  " with the following name is given the fish filetype, as the author clearly
+  " intends by the inclusion of the extension/e attribute.
+  "
+  " See the README for more information.
   "
   " script.sh##distro.Ubuntu,extension.fish
   if s:IsAlternateFileWithExtensionAttribute(l:filename) | return | endif

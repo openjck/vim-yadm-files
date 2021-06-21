@@ -1,16 +1,41 @@
 #!/usr/bin/env bash
 
-function test_vim() {
-  local BRANCH VIM_HOME VIM_CONFIG_DIRECTORY VIMRC SCRIPT_DIR
+# https://stackoverflow.com/a/246128/4297741
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-  BRANCH="$1"
+# Write a config file which enables only vader and this plugin
+function _write_config_file() {
+  local FILENAME="$1"
+  local TARGET="$2"
+
+  if [[ "$TARGET" == local ]]; then
+    local LOCAL_PATH
+    LOCAL_PATH=$(realpath "$SCRIPT_DIR/..")
+
+    PLUGIN_LINE="Plug '$LOCAL_PATH'"
+  elif [[ "$TARGET" == github* ]]; then
+    local BRANCH
+    BRANCH=$(cut --delimiter=':' --fields=2 <<< "$TARGET")
+
+    PLUGIN_LINE="Plug 'openjck/vim-yadm-files', { 'branch': '$BRANCH' }"
+  fi
+
+  {
+    echo 'call plug#begin()'
+    echo "Plug 'junegunn/vader.vim'"
+    echo "$PLUGIN_LINE"
+    echo 'call plug#end()'
+  } > "$FILENAME"
+}
+
+function test_vim() {
+  local TARGET VIM_HOME VIM_CONFIG_DIRECTORY VIMRC
+
+  TARGET="$1"
 
   VIM_HOME=$(mktemp --directory)
   VIM_CONFIG_DIRECTORY="$VIM_HOME/.vim"
   VIMRC="$VIM_CONFIG_DIRECTORY/vimrc"
-
-  # https://stackoverflow.com/a/246128/4297741
-  SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
   # Install vim-plug
   # https://github.com/junegunn/vim-plug#installation
@@ -18,13 +43,7 @@ function test_vim() {
     "$VIM_CONFIG_DIRECTORY/autoload/plug.vim" \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-  # Write a vimrc file which enables only vader and this plugin
-  {
-    echo 'call plug#begin()'
-    echo "Plug 'junegunn/vader.vim'"
-    echo "Plug 'openjck/vim-yadm-files', { 'branch': '$BRANCH' }"
-    echo 'call plug#end()'
-  } > "$VIMRC"
+  _write_config_file "$VIMRC" "$TARGET"
 
   # Install the plugins and run the tests in an isolated environment.[1]
   #
@@ -39,16 +58,13 @@ function test_vim() {
 }
 
 function test_nvim() {
-  local BRANCH NVIM_HOME NVIM_INIT SCRIPT_DIR
+  local TARGET NVIM_HOME NVIM_INIT
 
-  BRANCH="$1"
+  TARGET="$1"
 
   NVIM_HOME=$(mktemp --directory)
   NVIM_CONFIG_DIRECTORY="$NVIM_HOME/.config/nvim"
   NVIM_INIT="$NVIM_CONFIG_DIRECTORY/init.vim"
-
-  # https://stackoverflow.com/a/246128/4297741
-  SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
   mkdir --parents "$NVIM_CONFIG_DIRECTORY"
 
@@ -58,13 +74,7 @@ function test_nvim() {
     "$NVIM_HOME/.local/share/nvim/site/autoload/plug.vim" \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-  # Write an init.vim file which enables only vader and this plugin
-  {
-    echo 'call plug#begin()'
-    echo "Plug 'junegunn/vader.vim'"
-    echo "Plug 'openjck/vim-yadm-files', { 'branch': '$BRANCH' }"
-    echo 'call plug#end()'
-  } > "$NVIM_INIT"
+  _write_config_file "$NVIM_INIT" "$TARGET"
 
   # Install the plugins and run the tests in an isolated environment.[1]
   #
@@ -87,18 +97,26 @@ function test_nvim() {
   nvim -c "Vader $SCRIPT_DIR/../tests/*"
 }
 
-if [[ "$#" -ne 1 ]]; then
-  echo "Usage: $0 branchName"
+if [[ "$#" -ne 1 ]] || [[ ! "$1" =~ ^(local|github:(dev|staging|master))$ ]]; then
+  echo "Usage: $0 TARGET"
   echo
-  echo "For example:"
-  echo "    $0 staging"
+  echo 'Where targets are:'
+  echo '    local'
+  echo '    github:dev'
+  echo '    github:staging'
+  echo '    github:master'
+  echo
+  echo 'For example:'
+  echo "    $0 github:staging"
   exit 1
 else
+  TARGET="$1"
+
   echo -n 'Testing in vim... '
-  test_vim "$1"
+  test_vim "$TARGET"
   echo 'done.'
 
   echo -n 'Testing in nvim... '
-  test_nvim "$1"
+  test_nvim "$TARGET"
   echo 'done.'
 fi

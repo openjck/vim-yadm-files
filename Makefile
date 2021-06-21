@@ -1,10 +1,13 @@
-.PHONY: test-dev test-staging test-master
+.PHONY: test-local test-github-dev test-github-staging test-github-master
 
-test-dev:
-	bin/test dev
+test-local:
+	bin/test local
 
-test-staging:
-	bin/test staging
+test-github-dev:
+	bin/test github:dev
 
-test-master:
-	bin/test master
+test-github-staging:
+	bin/test github:staging
+
+test-github-master:
+	bin/test github:master

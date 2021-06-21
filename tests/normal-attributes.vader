@@ -1,0 +1,43 @@
+Execute (Correct filetype for filename with attribute: user):
+  edit .gitconfig\#\#user.john
+  AssertEqual 'gitconfig', &filetype
+
+Execute (Correct filetype for filename with attribute: u):
+  edit .gitconfig\#\#u.john
+  AssertEqual 'gitconfig', &filetype
+
+Execute (Correct filetype for filename with attribute: distro):
+  edit .gitconfig\#\#distro.Ubuntu
+  AssertEqual 'gitconfig', &filetype
+
+Execute (Correct filetype for filename with attribute: d):
+  edit .gitconfig\#\#d.Ubuntu
+  AssertEqual 'gitconfig', &filetype
+
+Execute (Correct filetype for filename with attribute: os):
+  edit .gitconfig\#\#os.Linux
+  AssertEqual 'gitconfig', &filetype
+
+Execute (Correct filetype for filename with attribute: o):
+  edit .gitconfig\#\#o.Linux
+  AssertEqual 'gitconfig', &filetype
+
+Execute (Correct filetype for filename with attribute: class):
+  edit .gitconfig\#\#class.work
+  AssertEqual 'gitconfig', &filetype
+
+Execute (Correct filetype for filename with attribute: c):
+  edit .gitconfig\#\#c.work
+  AssertEqual 'gitconfig', &filetype
+
+Execute (Correct filetype for filename with attribute: hostname):
+  edit .gitconfig\#\#hostname.enterprise
+  AssertEqual 'gitconfig', &filetype
+
+Execute (Correct filetype for filename with attribute: h):
+  edit .gitconfig\#\#h.enterprise
+  AssertEqual 'gitconfig', &filetype
+
+Execute (Correct filetype for filename with attribute: default):
+  edit .gitconfig\#\#h.enterprise
+  AssertEqual 'gitconfig', &filetype

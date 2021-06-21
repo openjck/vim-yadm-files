@@ -13,25 +13,27 @@
 " For more information about YADM alternate files, see the YADM documentation:
 "
 " https://yadm.io/docs/alternates
-function! s:HandlePossibleYADMAlternateFile()
-  " The file name not including the path (:t) of the current file (%)
+function! s:HandlePossibleAlternateFile()
+  " For the current file (%), the filename only without the path (:t)
   let l:filename = expand("%:t")
 
-  if s:IsYADMAlternateFile(l:filename)
+  " If this alterante file is a template file, which is really a special kind of
+  " alternate file, don't do anything. Template files are handled differently in
+  " the augroup.
+  if s:IsTemplateFile(l:filename) | return | endif
 
-    " If this file has a name which includes an "extension"/"e" attribute-value
-    " pair, dont do anything, so as to allow the "extension"/"e" attribute to
-    " have its intended effect
-    "
-    " This ensures that, for example, a file with the following name is given
-    " the fish filetype as the author clearly intends by the enclusion of the
-    " "extension" attribute-value pair:
-    "
-    " script.sh##distro.Ubuntu,extension.fish
-    if s:IsYADMAlternateFileWithExtensionAttribute(l:filename)
-      return
-    endif
+  " If this alternate file includes an extension/e attribute, don't do anything,
+  " so that the extension/e attribute takes precedence.
+  "
+  " This ensures that, for example, a file with the following name is given the
+  " fish filetype, as the author clearly intends by the inclusion of the
+  " extension/e attribute.
+  "
+  " script.sh##distro.Ubuntu,extension.fish
+  if s:IsAlternateFileWithExtensionAttribute(l:filename) | return | endif
 
+  if s:IsAlternateFile(l:filename)
+    echom(l:filename)
     " For example, .gitconfig
     let l:filename_without_suffix = split(l:filename, '##')[0]
 
@@ -49,23 +51,38 @@ function! s:HandlePossibleYADMAlternateFile()
     "
     " [1] execute 'set filetype=' . extension
     execute 'doautocmd filetypedetect BufRead ' . l:filename_without_suffix
-
   endif
 endfunction
 
-" Return true if the file is a YADM alternate file and it contains an
-" extension/e attribute-value pair
-function! s:IsYADMAlternateFileWithExtensionAttribute(filename)
-  " =~# is the "regex matches" operator
-  if a:filename =~# '\(##\|##.*,\)\(extension\|e\)\.'
-    return 1 " true
-  endif
-  return 0 " false
+" Return true if the file is a YADM template file.
+"
+" Note that ##t (for example, .gitconfig##t) is a valid suffix for a template
+" file.
+"
+" The =~? operator determines whether a regex matches case-insensitively. I do
+" not know for certain, but I assume that YADM supports capitalized attribute
+" names on case-insensitive systems like Mac and Windows.
+"
+" See ":help expr-=~?" for more information.
+function! s:IsTemplateFile(filename)
+  return a:filename =~? '.*##t'
 endfunction
 
-function! s:IsYADMAlternateFile(filename)
-  " Valid suffix attributes. These are listed in the YADM documentation:
-  " https://yadm.io/docs/alternates
+" Return true if the file is a YADM alternate file which contains an extension/e
+" attribute.
+function! s:IsAlternateFileWithExtensionAttribute(filename)
+  return a:filename =~? '.*\(##\|##.*,\)\(extension\|e\)\.'
+endfunction!
+
+" Return true if the file is a YADM alternate file.
+"
+" Valid suffix attributes are listed in the YADM documentation:
+" https://yadm.io/docs/alternates
+"
+" Note that extension/e and template/t are included here, even though files with
+" those attributes are excluded in the s:HandlePossibleAlternateFile function,
+" just in case this function ever needs to be used for another purpose.
+function! s:IsAlternateFile(filename)
   let l:attributes = [
   \ 'template', 't',
   \ 'user', 'u',
@@ -78,13 +95,32 @@ function! s:IsYADMAlternateFile(filename)
   \]
 
   for l:attribute in l:attributes
-    if a:filename =~ '##' . l:attribute
+    " According to the YADM documentation, the template/t attribute may legally
+    " be followed either by a dot or by nothing. That is, all of the following
+    " filenames are valid:
+    "
+    " .gitignore##template
+    " .gitignore##t
+    " .gitignore##template.envtpl
+    " .gitignore##t.envtpl
+    "
+    " When the template/t attribute is followed by nothing, as in the first two
+    " examples, the default template processor is used.
+    "
+    " According to the YADM documentation, all other attributes must be followed
+    " by a dot.
+    if (l:attribute == 't' || l:attribute == 'template') && a:filename =~? '##' . l:attribute . '\(\.\|$\)'
+      return 1
+    elseif a:filename =~? '##' . l:attribute . '\.'
       return 1 " true
     endif
   endfor
+
   return 0 " false
 endfunction
 
 augroup filetypedetect
-  autocmd BufRead,BufNewFile *##* call s:HandlePossibleYADMAlternateFile()
+  autocmd BufRead,BufNewFile *##* call s:HandlePossibleAlternateFile()
+  autocmd BufRead,BufNewFile *##{t,template},*##{t,template}.{default,j2,j2cli,envtpl} set filetype=jinja
+  autocmd BufRead,BufNewFile *##{t,template}.esh set filetype=esh
 augroup END

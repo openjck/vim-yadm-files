@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+
+function test_vim() {
+  local BRANCH VIM_HOME VIM_CONFIG_DIRECTORY VIMRC SCRIPT_DIR
+
+  BRANCH="$1"
+
+  VIM_HOME=$(mktemp --directory)
+  VIM_CONFIG_DIRECTORY="$VIM_HOME/.vim"
+  VIMRC="$VIM_CONFIG_DIRECTORY/vimrc"
+
+  # https://stackoverflow.com/a/246128/4297741
+  SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+  # Install vim-plug
+  # https://github.com/junegunn/vim-plug#installation
+  curl --silent --fail --location --create-dirs --output \
+    "$VIM_CONFIG_DIRECTORY/autoload/plug.vim" \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+  # Write a vimrc file which enables only vader and this plugin
+  {
+    echo 'call plug#begin()'
+    echo "Plug 'junegunn/vader.vim'"
+    echo "Plug 'openjck/vim-yadm-files', { 'branch': '$BRANCH' }"
+    echo 'call plug#end()'
+  } > "$VIMRC"
+
+  # Install the plugins and run the tests in an isolated environment.[1]
+  #
+  # Note that vader.vim suggests a different way of running tests in an isolated
+  # environment,[2] but that method assumes that vader.vim and the plugin being
+  # tested are already installed in the normal Vim/Neovim environment.
+  #
+  # [1] https://vi.stackexchange.com/a/14865/28836
+  # [2] https://github.com/junegunn/vader.vim#setting-up-isolated-testing-environment
+  HOME="$VIM_HOME" vim -c PlugInstall -c quitall
+  HOME="$VIM_HOME" vim -Nc "Vader $SCRIPT_DIR/../tests/*"
+}
+
+function test_nvim() {
+  local BRANCH NVIM_HOME NVIM_INIT SCRIPT_DIR
+
+  BRANCH="$1"
+
+  NVIM_HOME=$(mktemp --directory)
+  NVIM_CONFIG_DIRECTORY="$NVIM_HOME/.config/nvim"
+  NVIM_INIT="$NVIM_CONFIG_DIRECTORY/init.vim"
+
+  # https://stackoverflow.com/a/246128/4297741
+  SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+  mkdir --parents "$NVIM_CONFIG_DIRECTORY"
+
+  # Install vim-plug
+  # https://github.com/junegunn/vim-plug#installation
+  curl --silent --fail --location --create-dirs --output \
+    "$NVIM_HOME/.local/share/nvim/site/autoload/plug.vim" \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+  # Write an init.vim file which enables only vader and this plugin
+  {
+    echo 'call plug#begin()'
+    echo "Plug 'junegunn/vader.vim'"
+    echo "Plug 'openjck/vim-yadm-files', { 'branch': '$BRANCH' }"
+    echo 'call plug#end()'
+  } > "$NVIM_INIT"
+
+  # Install the plugins and run the tests in an isolated environment.[1]
+  #
+  # Note that vader.vim suggests a different way of running tests in an isolated
+  # environment,[2] but that method assumes that vader.vim and the plugin being
+  # tested are already installed in the normal Vim/Neovim environment.
+  #
+  # Note also that a different method needs to be used to isolate Neovim.[3] The
+  # HOME trick which is used to isolate Vim does not work for Neovim.
+  #
+  # [1] https://vi.stackexchange.com/a/14865/28836
+  # [2] https://github.com/junegunn/vader.vim#setting-up-isolated-testing-environment
+  # [3] https://www.reddit.com/r/neovim/comments/bge752/set_a_different_location_for_nvim_config_dir/elk7dbk/?context=3
+  #
+  # shellcheck disable=SC2034
+  local XDG_CONFIG_HOME="$NVIM_HOME/.config"
+  # shellcheck disable=SC2034
+  local XDG_DATA_HOME="$NVIM_HOME/.local/share"
+  nvim -c PlugInstall -c quitall
+  nvim -c "Vader $SCRIPT_DIR/../tests/*"
+}
+
+if [[ "$#" -ne 1 ]]; then
+  echo "Usage: $0 branchName"
+  echo
+  echo "For example:"
+  echo "    $0 staging"
+  exit 1
+else
+  echo -n 'Testing in vim... '
+  test_vim "$1"
+  echo 'done.'
+
+  echo -n 'Testing in nvim... '
+  test_nvim "$1"
+  echo 'done.'
+fi

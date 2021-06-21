@@ -1,0 +1,3 @@
+Execute (Correct filetype for filename with multiple attributes):
+  edit .gitconfig\#\#user.john,hostname.enterprise
+  AssertEqual 'gitconfig', &filetype

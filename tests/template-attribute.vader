@@ -1,0 +1,37 @@
+Execute (Correct template filetype for filename with attribute: template):
+  edit .gitconfig\#\#template
+  AssertEqual 'jinja', &filetype
+
+  edit .gitconfig\#\#template.default
+  AssertEqual 'jinja', &filetype
+
+  edit .gitconfig\#\#template.esh
+  AssertEqual 'esh', &filetype
+
+  edit .gitconfig\#\#template.j2
+  AssertEqual 'jinja', &filetype
+
+  edit .gitconfig\#\#template.j2cli
+  AssertEqual 'jinja', &filetype
+
+  edit .gitconfig\#\#template.envtpl
+  AssertEqual 'jinja', &filetype
+
+Execute (Correct template filetype for filename with attribute: t):
+  edit .gitconfig\#\#t
+  AssertEqual 'jinja', &filetype
+
+  edit .gitconfig\#\#t.default
+  AssertEqual 'jinja', &filetype
+
+  edit .gitconfig\#\#t.esh
+  AssertEqual 'esh', &filetype
+
+  edit .gitconfig\#\#t.j2
+  AssertEqual 'jinja', &filetype
+
+  edit .gitconfig\#\#t.j2cli
+  AssertEqual 'jinja', &filetype
+
+  edit .gitconfig\#\#t.envtpl
+  AssertEqual 'jinja', &filetype

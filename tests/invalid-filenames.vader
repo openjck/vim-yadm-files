@@ -1,0 +1,14 @@
+Execute (No filetype for filename with no suffix):
+  edit .gitconfig
+  AssertEqual 'gitconfig', &filetype
+
+Execute (No filetype for filename with suffix but no attributes):
+  edit .gitconfig\#\#
+  AssertEqual '', &filetype
+
+Execute (No filetype for filename with suffix and invalid attributes):
+  edit .gitconfig\#\#diskspace.1T
+  AssertEqual '', &filetype
+
+  edit .gitconfig\#\#diskspace.1T,color.black
+  AssertEqual '', &filetype

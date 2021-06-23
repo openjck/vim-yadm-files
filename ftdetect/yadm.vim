@@ -1,7 +1,7 @@
-" If this is a YADM alternate file, set the filetype based on the name of the
+" If this is a yadm alternate file, set the filetype based on the name of the
 " file with the suffix removed.
 "
-" A YADM alternate file is a file which ends with a suffix of two pound
+" A yadm alternate file is a file which ends with a suffix of two pound
 " characters followed by at least one of several keywords. For example:
 "
 "   .gitconfig##distro.Ubuntu
@@ -10,7 +10,7 @@
 " removed (in this case, .gitconfig) and tells the editor to instead use that
 " name to determine the filetype.
 "
-" For more information about YADM alternate files, see the YADM documentation:
+" For more information about yadm alternate files, see the yadm documentation:
 "
 " https://yadm.io/docs/alternates
 function! s:HandlePossibleAlternateFile()
@@ -56,13 +56,13 @@ function! s:HandlePossibleAlternateFile()
   endif
 endfunction
 
-" Return true if the file is a YADM template file.
+" Return true if the file is a yadm template file.
 "
 " Note that ##t (for example, .gitconfig##t) is a valid suffix for a template
 " file.
 "
 " The =~? operator determines whether a regex matches case-insensitively. I do
-" not know for certain, but I assume that YADM supports capitalized attribute
+" not know for certain, but I assume that yadm supports capitalized attribute
 " names on case-insensitive systems like Mac and Windows.
 "
 " See ":help expr-=~?" for more information.
@@ -70,15 +70,15 @@ function! s:IsTemplateFile(filename)
   return a:filename =~? '.*##t'
 endfunction
 
-" Return true if the file is a YADM alternate file which contains an extension/e
+" Return true if the file is a yadm alternate file which contains an extension/e
 " attribute.
 function! s:IsAlternateFileWithExtensionAttribute(filename)
   return a:filename =~? '.*\(##\|##.*,\)\(extension\|e\)\.'
 endfunction!
 
-" Return true if the file is a YADM alternate file.
+" Return true if the file is a yadm alternate file.
 "
-" Valid suffix attributes are listed in the YADM documentation:
+" Valid suffix attributes are listed in the yadm documentation:
 " https://yadm.io/docs/alternates
 "
 " Note that extension/e and template/t are included here, even though files with
@@ -97,7 +97,7 @@ function! s:IsAlternateFile(filename)
   \]
 
   for l:attribute in l:attributes
-    " According to the YADM documentation, the template/t attribute may legally
+    " According to the yadm documentation, the template/t attribute may legally
     " be followed either by a dot or by nothing. That is, all of the following
     " filenames are valid:
     "
@@ -109,7 +109,7 @@ function! s:IsAlternateFile(filename)
     " When the template/t attribute is followed by nothing, as in the first two
     " examples, the default template processor is used.
     "
-    " According to the YADM documentation, all other attributes must be followed
+    " According to the yadm documentation, all other attributes must be followed
     " by a dot.
     if (l:attribute == 't' || l:attribute == 'template') && a:filename =~? '##' . l:attribute . '\(\.\|$\)'
       return 1

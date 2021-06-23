@@ -9,7 +9,7 @@ It supports [alternate files](https://yadm.io/docs/alternates) and
 
 ## Alternate files
 
-vim-yadm-files supports YADM [alternate files](https://yadm.io/docs/alternates).
+vim-yadm-files supports yadm [alternate files](https://yadm.io/docs/alternates).
 For example, when this plugin is enabled, a file with the name
 `.gitconfig##distro.Ubuntu` will get the `gitconfig` filetype, which will cause
 Vim/Neovim to apply `gitconfig` syntax highlighting and enable other `gitconfig`
@@ -19,7 +19,7 @@ features.
 
 ### Jinja-based templates
 
-vim-yadm-files supports Jinja-based YADM
+vim-yadm-files supports Jinja-based yadm
 [templates](https://yadm.io/docs/templates). For example, when this plugin is
 enabled, a file with any of the following names will get the `jinja` filetype:
 
@@ -40,7 +40,7 @@ For syntax highlighting and other features, install a Jinja plugin like
 
 ### esh-based templates
 
-vim-yadm-files sets the `esh` filetype on esh-based YADM
+vim-yadm-files sets the `esh` filetype on esh-based yadm
 [templates](https://yadm.io/docs/templates). For example, when this plugin is
 enabled, a file with either of the following names will get the `esh` filetype:
 
@@ -56,7 +56,7 @@ future, it will be compatible with this plugin.
 
 ### Why not use the extension/e attribute for alternate files?
 
-YADM allows the filenames of alternate files to end with an `extension` or `e`
+yadm allows the filenames of alternate files to end with an `extension` or `e`
 attribute to make it appear as though it has a certain extension. For example, a
 file with the following name will be treated as a Fish script in Vim/Neovim and
 most other editors, even without this plugin enabled:

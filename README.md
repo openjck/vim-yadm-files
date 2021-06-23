@@ -40,7 +40,8 @@ For syntax highlighting and other features, install a Jinja plugin like
 
 ### esh-based templates
 
-vim-yadm-files sets the `esh` filetype on esh-based yadm
+vim-yadm-files sets the `esh` filetype on
+[esh](https://github.com/jirutka/esh)-based yadm
 [templates](https://yadm.io/docs/templates). For example, when this plugin is
 enabled, a file with either of the following names will get the `esh` filetype:
 

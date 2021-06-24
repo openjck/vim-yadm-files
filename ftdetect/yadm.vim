@@ -51,7 +51,8 @@ function! s:HandlePossibleAlternateFile()
     " For more information, see this Stack Overflow answer:
     " https://vi.stackexchange.com/a/29271/28836
     "
-    " [1] execute 'set filetype=' . extension
+    " [1] "execute 'set filetype=' . extension" or
+    "     "execute 'setfiletype ' . extension"
     execute 'doautocmd filetypedetect BufRead ' . l:filename_without_suffix
   endif
 endfunction

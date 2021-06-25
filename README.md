@@ -7,7 +7,21 @@ highlighting and other editor features are applied correctly.
 It supports [alternate files](https://yadm.io/docs/alternates) and
 [templates](https://yadm.io/docs/templates).
 
-## Alternate files
+## Installation
+
+vim-yadm-files should work with any Vim/Neovim plugin manager. If you would like
+to use [vim-plug](https://github.com/junegunn/vim-plug), for example:
+
+1. [Install vim-plug](https://github.com/junegunn/vim-plug#installation)
+2. Add `Plug 'openjck/vim-yadm-files'` to your Vim/Neovim configuration file
+3. Run `:PlugInstall`
+
+vim-plug does not come with any built-in documentation and does not provide any
+configuration options.
+
+## Usage
+
+### Alternate files
 
 vim-yadm-files supports yadm [alternate files](https://yadm.io/docs/alternates).
 For example, when this plugin is enabled, a file with the name
@@ -15,9 +29,9 @@ For example, when this plugin is enabled, a file with the name
 Vim/Neovim to apply `gitconfig` syntax highlighting and enable other `gitconfig`
 features.
 
-## Templates
+### Templates
 
-### Jinja-based templates
+#### Jinja-based templates
 
 vim-yadm-files supports Jinja-based yadm
 [templates](https://yadm.io/docs/templates). For example, when this plugin is
@@ -38,7 +52,7 @@ Note that neither Vim nor Neovim supports the `jinja` filetype out of the box.
 For syntax highlighting and other features, install a Jinja plugin like
 [vim-jinja2-syntax](https://github.com/glench/vim-jinja2-syntax).
 
-### esh-based templates
+#### esh-based templates
 
 vim-yadm-files sets the `esh` filetype on
 [esh](https://github.com/jirutka/esh)-based yadm

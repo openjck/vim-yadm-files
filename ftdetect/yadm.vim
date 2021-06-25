@@ -122,8 +122,27 @@ function! s:IsAlternateFile(filename)
   return 0 " false
 endfunction
 
-augroup filetypedetect
-  autocmd BufRead,BufNewFile *##* call s:HandlePossibleAlternateFile()
-  autocmd BufRead,BufNewFile *##{t,template},*##{t,template}.{default,j2,j2cli,envtpl} set filetype=jinja
-  autocmd BufRead,BufNewFile *##{t,template}.esh set filetype=esh
-augroup END
+" There are many ways to set filetypes in Vim/Neovim. It is not obvious to me
+" which method would be best in this situation, but I think this approach makes
+" sense.
+"
+" This essentially follows the guidance in part A of the new-filetype
+" documentation.[1] I think this is the right guidance to follow because we do
+" want to overrule all default file type checks. The correct filetype depends
+" completely on the suffix, which Vim/Neovim knows anything about.
+"
+" It seems that part C or part D of the new-filetype documentation could be
+" appropriate, except that, I assume, they should only be followed if an earlier
+" part (like part A) is not applicable.
+"
+" Ultimately, setting filetypes in Vim/Neovim is somewhat confusing. I'm trying
+" to use the right approach here, but I doubt any of this will matter much in
+" practice. If it does, someone can file a bug.
+"
+" [1] Run ":help new-filetype" and scroll to part A
+"
+" See also the following Stack Overflow answer to my question about this:
+" https://vi.stackexchange.com/a/31642/28836
+autocmd BufRead,BufNewFile *##* call s:HandlePossibleAlternateFile()
+autocmd BufRead,BufNewFile *##{t,template},*##{t,template}.{default,j2,j2cli,envtpl} set filetype=jinja
+autocmd BufRead,BufNewFile *##{t,template}.esh set filetype=esh

@@ -1,37 +1,49 @@
 #!/usr/bin/env bash
 
+# The absolute path to the directory that this script is in
 # https://stackoverflow.com/a/246128/4297741
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-# Write a config file which enables only vader and this plugin
+CACHED_VADER_PLUGIN_DIRECTORY=/tmp/vader.vim
+
+# Write a Vim/Neovim config file which enables only Vader and this plugin
 function _write_config_file() {
-  local FILENAME="$1"
-  local TARGET="$2"
+  local CONFIG_FILE_FILENAME="$1"
+  local TEST_TARGET="$2"
 
-  if [[ "$TARGET" == local ]]; then
-    local LOCAL_PATH
-    LOCAL_PATH=$(realpath "$SCRIPT_DIR/..")
 
-    PLUGIN_LINE="Plug '$LOCAL_PATH'"
-  elif [[ "$TARGET" == github* ]]; then
+  if [[ "$TEST_TARGET" == local ]]; then
+    local PATH_TO_TESTED_PLUGIN
+    PATH_TO_TESTED_PLUGIN=$(realpath "$SCRIPT_DIR/..")
+    LINE_TO_ENABLE_TESTED_PLUGIN="Plug '$PATH_TO_TESTED_PLUGIN'"
+  elif [[ "$TEST_TARGET" == github* ]]; then
     local BRANCH
-    BRANCH=$(cut --delimiter=':' --fields=2 <<< "$TARGET")
-
-    PLUGIN_LINE="Plug 'openjck/vim-yadm-files', { 'branch': '$BRANCH' }"
+    BRANCH=$(cut --delimiter=':' --fields=2 <<< "$TEST_TARGET")
+    LINE_TO_ENABLE_TESTED_PLUGIN="Plug 'openjck/vim-yadm-files', { 'branch': '$BRANCH' }"
   fi
 
   {
     echo 'call plug#begin()'
-    echo "Plug 'junegunn/vader.vim'"
-    echo "$PLUGIN_LINE"
+    echo "Plug '$CACHED_VADER_PLUGIN_DIRECTORY'"
+    echo "$LINE_TO_ENABLE_TESTED_PLUGIN"
     echo 'call plug#end()'
-  } > "$FILENAME"
+  } > "$CONFIG_FILE_FILENAME"
+}
+
+# Cache the Vader plugin for subsequent runs of this script
+function cache_vader() {
+  if [[ ! -d "$CACHED_VADER_PLUGIN_DIRECTORY" ]]; then
+    echo -n "Caching Vader to $CACHED_VADER_PLUGIN_DIRECTORY... "
+    git clone --quiet --depth 1 https://github.com/junegunn/vader.vim.git "$CACHED_VADER_PLUGIN_DIRECTORY"
+    echo "done."
+    echo
+  fi
 }
 
 function test_vim() {
-  local TARGET VIM_HOME VIM_CONFIG_DIRECTORY VIMRC
+  local TEST_TARGET VIM_HOME VIM_CONFIG_DIRECTORY VIMRC
 
-  TARGET="$1"
+  TEST_TARGET="$1"
 
   VIM_HOME=$(mktemp --directory)
   VIM_CONFIG_DIRECTORY="$VIM_HOME/.vim"
@@ -43,7 +55,7 @@ function test_vim() {
     "$VIM_CONFIG_DIRECTORY/autoload/plug.vim" \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-  _write_config_file "$VIMRC" "$TARGET"
+  _write_config_file "$VIMRC" "$TEST_TARGET"
 
   # Install the plugins and run the tests in an isolated environment.[1]
   #
@@ -58,9 +70,9 @@ function test_vim() {
 }
 
 function test_nvim() {
-  local TARGET NVIM_HOME NVIM_INIT
+  local TEST_TARGET NVIM_HOME NVIM_INIT
 
-  TARGET="$1"
+  TEST_TARGET="$1"
 
   NVIM_HOME=$(mktemp --directory)
   NVIM_CONFIG_DIRECTORY="$NVIM_HOME/.config/nvim"
@@ -74,7 +86,7 @@ function test_nvim() {
     "$NVIM_HOME/.local/share/nvim/site/autoload/plug.vim" \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-  _write_config_file "$NVIM_INIT" "$TARGET"
+  _write_config_file "$NVIM_INIT" "$TEST_TARGET"
 
   # Install the plugins and run the tests in an isolated environment.[1]
   #
@@ -98,9 +110,9 @@ function test_nvim() {
 }
 
 if [[ "$#" -ne 1 ]] || [[ ! "$1" =~ ^(local|github:(dev|staging|master))$ ]]; then
-  echo "Usage: $0 TARGET"
+  echo "Usage: $0 TEST_TARGET"
   echo
-  echo 'Where targets are:'
+  echo 'Where test targets are:'
   echo '    local'
   echo '    github:dev'
   echo '    github:staging'
@@ -110,13 +122,15 @@ if [[ "$#" -ne 1 ]] || [[ ! "$1" =~ ^(local|github:(dev|staging|master))$ ]]; th
   echo "    $0 github:staging"
   exit 1
 else
-  TARGET="$1"
+  TEST_TARGET="$1"
+
+  cache_vader
 
   echo -n 'Testing in vim... '
-  test_vim "$TARGET"
+  test_vim "$TEST_TARGET"
   echo 'done.'
 
   echo -n 'Testing in nvim... '
-  test_nvim "$TARGET"
+  test_nvim "$TEST_TARGET"
   echo 'done.'
 fi

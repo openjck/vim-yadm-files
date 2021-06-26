@@ -11,7 +11,6 @@ function _write_config_file() {
   local CONFIG_FILE_FILENAME="$1"
   local TEST_TARGET="$2"
 
-
   if [[ "$TEST_TARGET" == local ]]; then
     local PATH_TO_TESTED_PLUGIN
     PATH_TO_TESTED_PLUGIN=$(realpath "$SCRIPT_DIR/..")

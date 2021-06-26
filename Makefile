@@ -6,8 +6,8 @@ lint:
 test-local: lint
 	bin/test local
 
-test-github-dev: lint
+test-github-dev:
 	bin/test github:dev
 
-test-github-master: lint
+test-github-master:
 	bin/test github:master

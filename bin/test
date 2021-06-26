@@ -109,17 +109,16 @@ function test_nvim() {
   nvim -c "Vader $SCRIPT_DIR/../tests/*"
 }
 
-if [[ "$#" -ne 1 ]] || [[ ! "$1" =~ ^(local|github:(dev|staging|master))$ ]]; then
+if [[ "$#" -ne 1 ]] || [[ ! "$1" =~ ^(local|github:(dev|master))$ ]]; then
   echo "Usage: $0 TEST_TARGET"
   echo
   echo 'Where test targets are:'
   echo '    local'
   echo '    github:dev'
-  echo '    github:staging'
   echo '    github:master'
   echo
   echo 'For example:'
-  echo "    $0 github:staging"
+  echo "    $0 github:dev"
   exit 1
 else
   TEST_TARGET="$1"

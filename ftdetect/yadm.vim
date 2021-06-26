@@ -15,7 +15,7 @@
 " https://yadm.io/docs/alternates
 function! s:HandlePossibleAlternateFile()
   " For the current file (%), the filename only without the path (:t)
-  let l:filename = expand("%:t")
+  let l:filename = expand('%:t')
 
   " If this alterante file is a template file, which is really a special kind of
   " alternate file, don't do anything. Template files are handled differently in
@@ -75,7 +75,7 @@ endfunction
 " attribute.
 function! s:IsAlternateFileWithExtensionAttribute(filename)
   return a:filename =~? '.*\(##\|##.*,\)\(extension\|e\)\.'
-endfunction!
+endfunction
 
 " Return true if the file is a yadm alternate file.
 "
@@ -112,7 +112,7 @@ function! s:IsAlternateFile(filename)
     "
     " According to the yadm documentation, all other attributes must be followed
     " by a dot.
-    if (l:attribute == 't' || l:attribute == 'template') && a:filename =~? '##' . l:attribute . '\(\.\|$\)'
+    if (l:attribute ==? 't' || l:attribute ==? 'template') && a:filename =~? '##' . l:attribute . '\(\.\|$\)'
       return 1
     elseif a:filename =~? '##' . l:attribute . '\.'
       return 1 " true

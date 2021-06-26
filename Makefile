@@ -1,10 +1,13 @@
-.PHONY: test-local test-github-dev test-github-master
+.PHONY: lint test-local test-github-dev test-github-master
 
-test-local:
+lint:
+	vint ftdetect/yadm.vim
+
+test-local: lint
 	bin/test local
 
-test-github-dev:
+test-github-dev: lint
 	bin/test github:dev
 
-test-github-master:
+test-github-master: lint
 	bin/test github:master

@@ -1,0 +1,3 @@
+policies:
+  ProhibitAutocmdWithNoGroup:
+    enabled: false

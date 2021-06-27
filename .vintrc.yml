@@ -1,3 +1,5 @@
+cmdargs:
+  severity: style_problem
 policies:
   ProhibitAutocmdWithNoGroup:
     enabled: false

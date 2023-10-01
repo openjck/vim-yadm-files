@@ -1,11 +1,14 @@
 # vim-yadm-files
 
-vim-yadm-files is a Vim/Neovim plugin which applies correct filetypes to files
+vim-yadm-files is a Vim/Neovim plugin which sets correct filetypes for files
 managed by [yadm](https://github.com/TheLocehiliosan/yadm) so that syntax
-highlighting and other editor features are applied correctly.
+highlighting and other editor features work correctly.
 
 It supports [alternate files](https://yadm.io/docs/alternates) and
 [templates](https://yadm.io/docs/templates).
+
+vim-yadm-files does not ship with any documentation and does not provide any
+configuration options.
 
 ## Installation
 
@@ -15,9 +18,6 @@ to use [vim-plug](https://github.com/junegunn/vim-plug), for example:
 1. [Install vim-plug](https://github.com/junegunn/vim-plug#installation)
 2. Add `Plug 'openjck/vim-yadm-files'` to your Vim/Neovim configuration file
 3. Run `:PlugInstall`
-
-vim-yadm-files does not come with any built-in documentation and does not
-provide any configuration options.
 
 ## Usage
 
@@ -48,7 +48,7 @@ enabled, a file with any of the following names will get the `jinja` filetype:
 - `.gitconfig##template.j2cli`
 - `.gitconfig##template.envtpl`
 
-Note that neither Vim nor Neovim supports the `jinja` filetype out of the box.
+Note that neither Vim nor Neovim support the `jinja` filetype out of the box.
 For syntax highlighting and other features, install a Jinja plugin like
 [vim-jinja2-syntax](https://github.com/glench/vim-jinja2-syntax).
 
@@ -62,7 +62,7 @@ enabled, a file with either of the following names will get the `esh` filetype:
 - `.gitconfig##t.esh`
 - `.gitconfig##template.esh`
 
-Note that neither Vim nor Neovim supports the `esh` filetype out of the box. I
+Note that neither Vim nor Neovim support the `esh` filetype out of the box. I
 also cannot find any plugins which provide syntax highlighting or other features
 for files with the `esh` filetype. However, if such a plugin is published in the
 future, it will be compatible with this plugin.
@@ -98,6 +98,9 @@ following names will not get the `gitconfig` file type:
 
 ### Why not use a modeline?
 
-You _can_ use a [modeline](https://vim.fandom.com/wiki/Modeline_magic) to
-suggest that Vim/Neovim set a certain filetype. I just prefer to keep my files
-clean.
+If you don't want to use this plugin, you could instead communicate the filetype
+to Vim/Neovim by [using a
+modeline](https://til.hashrocket.com/posts/36680411fa-setting-filetype-with-modelines).
+That's a perfectly valid solution to the problem of Vim/Neovim setting the wrong
+filetype on files managed by yadm. I just prefer not to use modelines when
+possible, to keep my files clean.

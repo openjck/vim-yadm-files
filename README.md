@@ -16,8 +16,8 @@ to use [vim-plug](https://github.com/junegunn/vim-plug), for example:
 2. Add `Plug 'openjck/vim-yadm-files'` to your Vim/Neovim configuration file
 3. Run `:PlugInstall`
 
-vim-plug does not come with any built-in documentation and does not provide any
-configuration options.
+vim-yadm-files does not come with any built-in documentation and does not
+provide any configuration options.
 
 ## Usage
 

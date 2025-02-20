@@ -1,5 +1,20 @@
 # vim-yadm-files
 
+## Note about archival
+
+I now use [vcsh](https://github.com/RichiH/vcsh) rather than
+[yadm](https://github.com/yadm-dev/yadm). The tools are very similar, but vcsh
+allows one to more easily manage multiple dotfile repos.
+
+As I'm no longer using yadm and I'm not sure anyone is using this plugin, it has
+been archived. Consider using a modeline instead, as described in the section
+[Why not use a modeline?](#why-not-use-a-modeline). Writing this plugin was
+a great learning experience, but truthfully, if it had occurred to me that
+modelines would have solved my problem, I probably wouldn't have ever written
+it.
+
+## Introduction
+
 vim-yadm-files is a Vim/Neovim plugin which sets correct filetypes for files
 managed by [yadm](https://github.com/TheLocehiliosan/yadm) so that syntax
 highlighting and other editor features work correctly.
